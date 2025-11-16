@@ -2,6 +2,8 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 
+const burialRoutes = require("./routes/burials");
+
 const mongoose = require("mongoose");
 dotenv.config();
 
@@ -15,6 +17,12 @@ const PORT = process.env.PORT || 5000;
 const connectDB = require("./config/db");
 connectDB();
 
+//middleware
+app.use((req, res, next) => {
+  console.log(req.path, req.method);
+  next();
+});
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
@@ -26,3 +34,10 @@ mongoose
     console.error(error.message);
     process.exit(1);
   });
+
+//routes
+app.get("/", (req, res) => {
+  res.send("iChurch-Web API is running...");
+});
+
+app.use("/api/burials", burialRoutes);
