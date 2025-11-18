@@ -5,6 +5,7 @@ const cors = require("cors");
 const burialRoutes = require("./routes/burials");
 const marriageRoutes = require("./routes/marriage");
 const parishCmteRoutes = require("./routes/parishCmte");
+const zonalLeaderRoutes = require("./routes/zonalLeader");
 
 const mongoose = require("mongoose");
 dotenv.config();
@@ -45,3 +46,9 @@ app.get("/", (req, res) => {
 app.use("/api/burials", burialRoutes);
 app.use("/api/marriages", marriageRoutes);
 app.use("/api/parish-committee", parishCmteRoutes);
+app.use("/api/zonal-leaders", zonalLeaderRoutes);
+
+//error handling middleware for invalid routes
+app.use((req, res) => {
+  res.status(404).json({error: "Route not found"});
+});
