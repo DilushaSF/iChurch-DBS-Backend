@@ -15,8 +15,18 @@ const marriageSchema = new Schema(
       enum: ["Full", "Half"],
       default: "",
     },
-    needChurchChoir: {type: Boolean, required: true},
-    useChurchDecos: {type: Boolean, required: false},
+    needChurchChoir: {
+      type: String,
+      required: true,
+      enum: ["Yes", "No"],
+      default: "",
+    },
+    useChurchDecos: {
+      type: String,
+      required: true,
+      enum: ["Yes", "No"],
+      default: "",
+    },
   },
   {timestamps: true}
 );

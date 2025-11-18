@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 
 const burialRoutes = require("./routes/burials");
+const marriageRoutes = require("./routes/marriage");
 
 const mongoose = require("mongoose");
 dotenv.config();
@@ -41,3 +42,4 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/burials", burialRoutes);
+app.use("/api/marriages", marriageRoutes);
