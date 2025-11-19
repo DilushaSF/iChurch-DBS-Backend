@@ -7,6 +7,7 @@ const marriageRoutes = require("./routes/marriage");
 const parishCmteRoutes = require("./routes/parishCmte");
 const zonalLeaderRoutes = require("./routes/zonalLeader");
 const unitLeaderRoutes = require("./routes/unitLeader");
+const choirRoutes = require("./routes/choir");
 
 const mongoose = require("mongoose");
 dotenv.config();
@@ -49,6 +50,7 @@ app.use("/api/marriages", marriageRoutes);
 app.use("/api/parish-committee", parishCmteRoutes);
 app.use("/api/zonal-leaders", zonalLeaderRoutes);
 app.use("/api/unit-leaders", unitLeaderRoutes);
+app.use("/api/choiristors", choirRoutes);
 
 //error handling middleware for invalid routes
 app.use((req, res) => {
