@@ -11,6 +11,7 @@ const youthSchema = new Schema(
     address: {type: String, required: true},
     contactNumber: {type: String, required: true},
     position: {type: String, required: false},
+    isActiveMember: {type: Boolean, required: false},
   },
   {timestamps: true}
 );
