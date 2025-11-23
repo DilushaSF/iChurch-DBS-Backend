@@ -35,6 +35,7 @@ const addYouthMember = async (req, res) => {
     address,
     contactNumber,
     position,
+    isActiveMember,
   } = req.body;
   try {
     const newYouthMember = await Youth.create({
@@ -45,6 +46,7 @@ const addYouthMember = async (req, res) => {
       address,
       contactNumber,
       position,
+      isActiveMember,
     });
     res.status(200).json(newYouthMember);
   } catch (error) {
