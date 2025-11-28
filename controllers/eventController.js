@@ -25,6 +25,9 @@ const createEvent = async (req, res) => {
     recurring,
     recurrence,
     createdBy,
+    allDay,
+    reminder,
+    reminderTime,
   } = req.body;
 
   try {
@@ -39,6 +42,9 @@ const createEvent = async (req, res) => {
       recurring,
       recurrence,
       createdBy,
+      allDay,
+      reminder,
+      reminderTime,
     });
 
     res.status(201).json(newEvent);
