@@ -13,6 +13,7 @@ const sundaySchoolRoutes = require("./routes/sundaySchool");
 const memberRegistrationRoutes = require("./routes/memberRegistration");
 const eventRoutes = require("./routes/event");
 const userRoutes = require("./routes/user");
+const baptismRoutes = require("./routes/baptism");
 
 const mongoose = require("mongoose");
 dotenv.config();
@@ -61,6 +62,7 @@ app.use("/api/sunday-school-teachers", sundaySchoolRoutes);
 app.use("/api/member-registrations", memberRegistrationRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/baptisms", baptismRoutes);
 
 //error handling middleware for invalid routes
 app.use((req, res) => {
