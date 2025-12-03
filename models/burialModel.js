@@ -11,6 +11,11 @@ const burialSchema = new Schema(
     baptized: {type: Boolean, required: true},
     caouseOfDeath: {type: String, required: true},
     custodian: {type: String, required: false},
+    createdBy: {
+      type: mongooese.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {timestamps: true}
 );

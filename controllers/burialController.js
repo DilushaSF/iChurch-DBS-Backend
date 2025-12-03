@@ -4,7 +4,9 @@ const mongoose = require("mongoose");
 // get all burial records
 const getBurials = async (req, res) => {
   try {
-    const burials = await Burial.find({}).sort({createdAt: -1});
+    const burials = await Burial.find({
+      createdBy: req.user._id,
+    }).sort({createdAt: -1});
     res.status(200).json(burials);
   } catch (error) {
     res.status(400).json({error: error.message});
@@ -17,7 +19,10 @@ const getBurial = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: "No such burial record ID"});
   }
-  const burial = await Burial.findById(id);
+  const burial = await Burial.findOne({
+    _id: id,
+    createdBy: req.user._id,
+  });
   if (!burial) {
     return res.status(404).json({error: "Burial record not found"});
   }
@@ -37,6 +42,11 @@ const createBurial = async (req, res) => {
     custodian,
   } = req.body;
   try {
+    const createdBy = req.user._id;
+
+    if (!createdBy) {
+      return res.status(401).json({error: "User not authenticated"});
+    }
     const newBurial = await Burial.create({
       nameOfDeceased,
       dateOfDeath,
@@ -45,6 +55,7 @@ const createBurial = async (req, res) => {
       baptized,
       caouseOfDeath,
       custodian,
+      createdBy,
     });
     res.status(200).json(newBurial);
   } catch (error) {
@@ -58,7 +69,10 @@ const deleteBurial = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: "No such burial record ID"});
   }
-  const burial = await Burial.findOneAndDelete({_id: id});
+  const burial = await Burial.findOneAndDelete({
+    _id: id,
+    createdBy: req.user._id,
+  });
   if (!burial) {
     return res.status(404).json({error: "Burial record not found"});
   }
@@ -75,10 +89,11 @@ const editBurial = async (req, res) => {
   }
 
   const burial = await Burial.findOneAndUpdate(
-    {_id: id},
+    {_id: id, createdBy: req.user._id},
     {
       ...req.body,
-    }
+    },
+    {new: true}
   );
 
   if (!burial) {

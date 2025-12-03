@@ -1,4 +1,5 @@
 const express = require("express");
+const authMiddleware = require("../middleware/auth");
 const {
   createBurial,
   getBurials,
@@ -10,18 +11,18 @@ const {
 const router = express.Router();
 
 //Get all burial records
-router.get("/", getBurials);
+router.get("/", authMiddleware, getBurials);
 
 // Adding a new burial record
-router.post("/", createBurial);
+router.post("/", authMiddleware, createBurial);
 
 // Get a single burial record
-router.get("/:id", getBurial);
+router.get("/:id", authMiddleware, getBurial);
 
 // Edit a single burial record
-router.patch("/:id", editBurial);
+router.patch("/:id", authMiddleware, editBurial);
 
 // Delete a single burial record
-router.delete("/:id", deleteBurial);
+router.delete("/:id", authMiddleware, deleteBurial);
 
 module.exports = router;
