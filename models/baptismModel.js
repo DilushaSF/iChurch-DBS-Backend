@@ -17,6 +17,11 @@ const baptismSchema = new Schema(
     timeOfBaptism: {type: String, required: true},
     areParentsMarried: {type: Boolean, required: false},
     isFatherCatholic: {type: Boolean, required: false},
+    createdBy: {
+      type: mongooese.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {timestamps: true}
 );

@@ -1,4 +1,5 @@
 const express = require("express");
+const authMiddleware = require("../middleware/auth");
 
 const {
   addMarriage,
@@ -11,18 +12,18 @@ const {
 const router = express.Router();
 
 //Get all marriage records
-router.get("/", getMarriages);
+router.get("/", authMiddleware, getMarriages);
 
 // Adding a new marriage record
-router.post("/", addMarriage);
+router.post("/", authMiddleware, addMarriage);
 
 // Get a single marriage record
-router.get("/:id", getMarriage);
+router.get("/:id", authMiddleware, getMarriage);
 
 // Edit a single marriage record
-router.patch("/:id", editMarriage);
+router.patch("/:id", authMiddleware, editMarriage);
 
 // Delete a single marriage record
-router.delete("/:id", deleteMarriage);
+router.delete("/:id", authMiddleware, deleteMarriage);
 
 module.exports = router;

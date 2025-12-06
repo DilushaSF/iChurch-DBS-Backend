@@ -1,4 +1,5 @@
 const express = require("express");
+const authMiddleware = require("../middleware/auth");
 const {
   addBaptism,
   getBaptisms,
@@ -10,18 +11,18 @@ const {
 const router = express.Router();
 
 //Get all baptism records
-router.get("/", getBaptisms);
+router.get("/", authMiddleware, getBaptisms);
 
 // Adding a new baptism record
-router.post("/", addBaptism);
+router.post("/", authMiddleware, addBaptism);
 
 // Get a single baptism record
-router.get("/:id", getBaptism);
+router.get("/:id", authMiddleware, getBaptism);
 
 // Edit a single baptism record
-router.patch("/:id", editBaptism);
+router.patch("/:id", authMiddleware, editBaptism);
 
 // Delete a single baptism record
-router.delete("/:id", deleteBaptism);
+router.delete("/:id", authMiddleware, deleteBaptism);
 
 module.exports = router;

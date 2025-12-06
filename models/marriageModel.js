@@ -27,6 +27,11 @@ const marriageSchema = new Schema(
       enum: ["Yes", "No"],
       default: "",
     },
+    createdBy: {
+      type: mongooese.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {timestamps: true}
 );

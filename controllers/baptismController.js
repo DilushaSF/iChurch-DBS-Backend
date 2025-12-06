@@ -4,7 +4,9 @@ const mongoose = require("mongoose");
 // get all baptism records
 const getBaptisms = async (req, res) => {
   try {
-    const baptisms = await Baptism.find({}).sort({createdAt: -1});
+    const baptisms = await Baptism.find({createdBy: req.user._id}).sort({
+      createdAt: -1,
+    });
     res.status(200).json(baptisms);
   } catch (error) {
     res.status(400).json({error: error.message});
@@ -17,7 +19,10 @@ const getBaptism = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: "No such baptism record ID"});
   }
-  const baptism = await Baptism.findById(id);
+  const baptism = await Baptism.findOne({
+    _id: id,
+    createdBy: req.user._id,
+  });
   if (!baptism) {
     return res.status(404).json({error: "Baptism record not found"});
   }
@@ -43,6 +48,12 @@ const addBaptism = async (req, res) => {
     isFatherCatholic,
   } = req.body;
   try {
+    const createdBy = req.user._id;
+
+    if (!createdBy) {
+      return res.status(401).json({error: "User not authenticated"});
+    }
+
     const newBaptism = await Baptism.create({
       childName,
       dateOfBirth,
@@ -57,6 +68,7 @@ const addBaptism = async (req, res) => {
       timeOfBaptism,
       areParentsMarried,
       isFatherCatholic,
+      createdBy,
     });
     res.status(200).json(newBaptism);
   } catch (error) {
@@ -70,7 +82,10 @@ const deleteBaptism = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: "No such baptism record ID"});
   }
-  const baptism = await Baptism.findOneAndDelete({_id: id});
+  const baptism = await Baptism.findOneAndDelete({
+    _id: id,
+    createdBy: req.user._id,
+  });
   if (!baptism) {
     return res.status(404).json({error: "Baptism record not found"});
   }
@@ -86,7 +101,10 @@ const editBaptism = async (req, res) => {
     return res.status(404).json({error: "No such baptism record ID"});
   }
 
-  const baptism = await Baptism.findOneAndUpdate({_id: id}, {...req.body});
+  const baptism = await Baptism.findOneAndUpdate(
+    {_id: id, createdBy: req.user._id},
+    {...req.body}
+  );
 
   if (!baptism) {
     return res.status(400).json({error: "Baptism record not found"});

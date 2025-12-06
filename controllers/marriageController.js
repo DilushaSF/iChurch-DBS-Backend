@@ -4,7 +4,9 @@ const mongoose = require("mongoose");
 // get all marriage records
 const getMarriages = async (req, res) => {
   try {
-    const marriages = await Marriage.find({}).sort({createdAt: -1});
+    const marriages = await Marriage.find({createdBy: req.user._id}).sort({
+      createdAt: -1,
+    });
     res.status(200).json(marriages);
   } catch (error) {
     res.status(400).json({error: error.message});
@@ -17,7 +19,10 @@ const getMarriage = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: "No such marriage record ID"});
   }
-  const marriage = await Marriage.findById(id);
+  const marriage = await Marriage.findOne({
+    _id: id,
+    createdBy: req.user._id,
+  });
   if (!marriage) {
     return res.status(404).json({error: "Marriage record not found"});
   }
@@ -39,6 +44,12 @@ const addMarriage = async (req, res) => {
     useChurchDecos,
   } = req.body;
   try {
+    const createdBy = req.user._id;
+
+    if (!createdBy) {
+      return res.status(401).json({error: "User not authenticated"});
+    }
+
     const newMarriage = await Marriage.create({
       nameOfBride,
       nameOfGroom,
@@ -48,6 +59,7 @@ const addMarriage = async (req, res) => {
       massType,
       needChurchChoir,
       useChurchDecos,
+      createdBy,
     });
     res.status(200).json(newMarriage);
   } catch (error) {
@@ -61,7 +73,10 @@ const deleteMarriage = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: "No such marriage record ID"});
   }
-  const marriage = await Marriage.findOneAndDelete({_id: id});
+  const marriage = await Marriage.findOneAndDelete({
+    _id: id,
+    createdBy: req.user._id,
+  });
   if (!marriage) {
     return res.status(404).json({error: "Marriage record not found"});
   }
@@ -77,7 +92,10 @@ const editMarriage = async (req, res) => {
     return res.status(404).json({error: "No such marriage record ID"});
   }
 
-  const marriage = await Marriage.findOneAndUpdate({_id: id}, {...req.body});
+  const marriage = await Marriage.findOneAndUpdate(
+    {_id: id, createdBy: req.user._id},
+    {...req.body}
+  );
 
   if (!marriage) {
     return res.status(400).json({error: "Marriage record not found"});
