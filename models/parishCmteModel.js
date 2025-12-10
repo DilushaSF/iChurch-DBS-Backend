@@ -23,6 +23,11 @@ const parishCmteSchema = new Schema(
     position: {type: String, required: false},
     joinedDate: {type: Date, required: true},
     representingCommittee: {type: String, required: true},
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {timestamps: true}
 );

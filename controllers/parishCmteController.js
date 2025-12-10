@@ -4,7 +4,9 @@ const mongoose = require("mongoose");
 // get all committee records
 const getCommitteeMembers = async (req, res) => {
   try {
-    const committeeMembers = await ParishCommittee.find({}).sort({
+    const committeeMembers = await ParishCommittee.find({
+      createdBy: req.user._id,
+    }).sort({
       createdAt: -1,
     });
     res.status(200).json(committeeMembers);
@@ -19,7 +21,10 @@ const getCommitteeMember = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: "No such parish committee member ID"});
   }
-  const committeeMember = await ParishCommittee.findById(id);
+  const committeeMember = await ParishCommittee.findOne({
+    _id: id,
+    createdBy: req.user._id,
+  });
   if (!committeeMember) {
     return res.status(404).json({error: "Parish committee member not found"});
   }
@@ -41,6 +46,12 @@ const addCommitteeMember = async (req, res) => {
     representingCommittee,
   } = req.body;
   try {
+    const createdBy = req.user._id;
+
+    if (!createdBy) {
+      return res.status(401).json({error: "User not authenticated"});
+    }
+
     const newCommitteeMember = await ParishCommittee.create({
       firstName,
       lastName,
@@ -51,6 +62,7 @@ const addCommitteeMember = async (req, res) => {
       position,
       joinedDate,
       representingCommittee,
+      createdBy,
     });
     res.status(200).json(newCommitteeMember);
   } catch (error) {
@@ -64,7 +76,10 @@ const deleteCommitteeMember = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: "No such parish committee member ID"});
   }
-  const committeeMember = await ParishCommittee.findOneAndDelete({_id: id});
+  const committeeMember = await ParishCommittee.findOneAndDelete({
+    _id: id,
+    createdBy: req.user._id,
+  });
   if (!committeeMember) {
     return res.status(404).json({error: "Parish committee member not found"});
   }
@@ -81,7 +96,7 @@ const editCommitteeMember = async (req, res) => {
   }
 
   const committeeMember = await ParishCommittee.findOneAndUpdate(
-    {_id: id},
+    {_id: id, createdBy: req.user._id},
     {
       ...req.body,
     }

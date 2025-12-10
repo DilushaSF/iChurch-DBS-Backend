@@ -1,5 +1,5 @@
 const express = require("express");
-
+const authMiddleware = require("../middleware/auth");
 const {
   addCommitteeMember,
   getCommitteeMembers,
@@ -11,18 +11,18 @@ const {
 const router = express.Router();
 
 //Get all parish committee members
-router.get("/", getCommitteeMembers);
+router.get("/", authMiddleware, getCommitteeMembers);
 
 // Adding a new committee member
-router.post("/", addCommitteeMember);
+router.post("/", authMiddleware, addCommitteeMember);
 
 // Get a single committee member
-router.get("/:id", getCommitteeMember);
+router.get("/:id", authMiddleware, getCommitteeMember);
 
 // Edit a single committee member
-router.patch("/:id", editCommitteeMember);
+router.patch("/:id", authMiddleware, editCommitteeMember);
 
 // Delete a single committee member
-router.delete("/:id", deleteCommitteeMember);
+router.delete("/:id", authMiddleware, deleteCommitteeMember);
 
 module.exports = router;
