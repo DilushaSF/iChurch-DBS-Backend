@@ -1,4 +1,5 @@
 const express = require("express");
+const authMiddleware = require("../middleware/auth");
 const {
   addChoiristor,
   getChoiristors,
@@ -10,18 +11,18 @@ const {
 const router = express.Router();
 
 //Get all choiristors
-router.get("/", getChoiristors);
+router.get("/", authMiddleware, getChoiristors);
 
 // Adding a new choiristor
-router.post("/", addChoiristor);
+router.post("/", authMiddleware, addChoiristor);
 
 // Get a single choiristor
-router.get("/:id", getChoiristor);
+router.get("/:id", authMiddleware, getChoiristor);
 
 // Edit a single choiristor
-router.patch("/:id", editChoiristor);
+router.patch("/:id", authMiddleware, editChoiristor);
 
 // Delete a choiristor
-router.delete("/:id", deleteChoiristor);
+router.delete("/:id", authMiddleware, deleteChoiristor);
 
 module.exports = router;

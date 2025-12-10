@@ -19,6 +19,11 @@ const choirSchema = new Schema(
       enum: ["Senior", "Junior", "English"],
       default: "",
     },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {timestamps: true}
 );

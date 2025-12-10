@@ -4,7 +4,9 @@ const mongoose = require("mongoose");
 // get all youth members
 const getYouthMembers = async (req, res) => {
   try {
-    const youthMembers = await Youth.find({}).sort({createdAt: -1});
+    const youthMembers = await Youth.find({createdBy: req.user._id}).sort({
+      createdAt: -1,
+    });
     res.status(200).json(youthMembers);
   } catch (error) {
     res.status(400).json({error: error.message});
@@ -17,7 +19,10 @@ const getYouthMember = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: "No such youth member ID"});
   }
-  const youthMember = await Youth.findById(id);
+  const youthMember = await Youth.findOne({
+    _id: id,
+    createdBy: req.user._id,
+  });
   if (!youthMember) {
     return res.status(404).json({error: "Youth member not found"});
   }
@@ -38,6 +43,12 @@ const addYouthMember = async (req, res) => {
     isActiveMember,
   } = req.body;
   try {
+    const createdBy = req.user._id;
+
+    if (!createdBy) {
+      return res.status(401).json({error: "User not authenticated"});
+    }
+
     const newYouthMember = await Youth.create({
       firstName,
       lastName,
@@ -47,6 +58,7 @@ const addYouthMember = async (req, res) => {
       contactNumber,
       position,
       isActiveMember,
+      createdBy,
     });
     res.status(200).json(newYouthMember);
   } catch (error) {
@@ -60,7 +72,10 @@ const deleteYouthMember = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: "No such youth member ID"});
   }
-  const youthMember = await Youth.findOneAndDelete({_id: id});
+  const youthMember = await Youth.findOneAndDelete({
+    _id: id,
+    createdBy: req.user._id,
+  });
   if (!youthMember) {
     return res.status(404).json({error: "Youth member not found"});
   }
@@ -76,7 +91,10 @@ const editYouthMember = async (req, res) => {
     return res.status(404).json({error: "No such youth member ID"});
   }
 
-  const youthMember = await Youth.findOneAndUpdate({_id: id}, {...req.body});
+  const youthMember = await Youth.findOneAndUpdate(
+    {_id: id, createdBy: req.user._id},
+    {...req.body}
+  );
 
   if (!youthMember) {
     return res.status(400).json({error: "Youth member not found"});

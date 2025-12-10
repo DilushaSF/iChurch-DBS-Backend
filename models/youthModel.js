@@ -1,6 +1,6 @@
-const mongooese = require("mongoose");
+const mongoose = require("mongoose");
 
-const Schema = mongooese.Schema;
+const Schema = mongoose.Schema;
 
 const youthSchema = new Schema(
   {
@@ -12,8 +12,13 @@ const youthSchema = new Schema(
     contactNumber: {type: String, required: true},
     position: {type: String, required: false},
     isActiveMember: {type: Boolean, required: false},
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {timestamps: true}
 );
 
-module.exports = mongooese.model("Youth", youthSchema);
+module.exports = mongoose.model("Youth", youthSchema);
