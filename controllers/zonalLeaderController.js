@@ -4,7 +4,9 @@ const mongoose = require("mongoose");
 // get all zonal leaders
 const getZonalLeaders = async (req, res) => {
   try {
-    const zonalLeaders = await ZonalLeader.find({}).sort({createdAt: -1});
+    const zonalLeaders = await ZonalLeader.find({createdBy: req.user._id}).sort(
+      {createdAt: -1}
+    );
     res.status(200).json(zonalLeaders);
   } catch (error) {
     res.status(400).json({error: error.message});
@@ -17,7 +19,10 @@ const getZonalLeader = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: "No such zonal leader ID"});
   }
-  const zonalLeader = await ZonalLeader.findById(id);
+  const zonalLeader = await ZonalLeader.findOne({
+    _id: id,
+    createdBy: req.user._id,
+  });
   if (!zonalLeader) {
     return res.status(404).json({error: "Zonal leader not found"});
   }
@@ -37,6 +42,12 @@ const addZonalLeader = async (req, res) => {
     dateOfBirth,
   } = req.body;
   try {
+    const createdBy = req.user._id;
+
+    if (!createdBy) {
+      return res.status(401).json({error: "User not authenticated"});
+    }
+
     const newZonalLeader = await ZonalLeader.create({
       firstName,
       lastName,
@@ -45,6 +56,7 @@ const addZonalLeader = async (req, res) => {
       appointedDate,
       zoneNumber,
       dateOfBirth,
+      createdBy,
     });
     res.status(200).json(newZonalLeader);
   } catch (error) {
@@ -59,7 +71,10 @@ const deleteZonalLeader = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: "No such zonal leader ID"});
   }
-  const zonalLeader = await ZonalLeader.findOneAndDelete({_id: id});
+  const zonalLeader = await ZonalLeader.findOneAndDelete({
+    _id: id,
+    createdBy: req.user._id,
+  });
 
   if (!zonalLeader) {
     return res.status(404).json({error: "Zonal leader not found"});
@@ -77,7 +92,7 @@ const editZonalLeader = async (req, res) => {
   }
 
   const zonalLeader = await ZonalLeader.findOneAndUpdate(
-    {_id: id},
+    {_id: id, createdBy: req.user._id},
     {...req.body}
   );
 

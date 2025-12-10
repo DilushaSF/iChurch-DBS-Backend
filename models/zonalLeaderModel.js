@@ -11,6 +11,11 @@ const zonalLeaderSchema = new Schema(
     contactNumber: {type: String, required: true},
     appointedDate: {type: String, required: false},
     zoneNumber: {type: String, required: true},
+    createdBy: {
+      type: mongooese.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {timestamps: true}
 );

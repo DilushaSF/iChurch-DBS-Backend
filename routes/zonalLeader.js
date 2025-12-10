@@ -1,4 +1,5 @@
 const express = require("express");
+const authMiddleware = require("../middleware/auth");
 const {
   addZonalLeader,
   getZonalLeaders,
@@ -10,18 +11,18 @@ const {
 const router = express.Router();
 
 //Get all zonal leaders
-router.get("/", getZonalLeaders);
+router.get("/", authMiddleware, getZonalLeaders);
 
 // Adding a new zonal leader
-router.post("/", addZonalLeader);
+router.post("/", authMiddleware, addZonalLeader);
 
 // Get a single zonal leader
-router.get("/:id", getZonalLeader);
+router.get("/:id", authMiddleware, getZonalLeader);
 
 // Edit a single zonal leader
-router.patch("/:id", editZonalLeader);
+router.patch("/:id", authMiddleware, editZonalLeader);
 
 // Delete a single zonal leader
-router.delete("/:id", deleteZonalLeader);
+router.delete("/:id", authMiddleware, deleteZonalLeader);
 
 module.exports = router;
