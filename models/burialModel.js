@@ -1,6 +1,6 @@
-const mongooese = require("mongoose");
+const mongoose = require("mongoose");
 
-const Schema = mongooese.Schema;
+const Schema = mongoose.Schema;
 
 const burialSchema = new Schema(
   {
@@ -12,7 +12,7 @@ const burialSchema = new Schema(
     caouseOfDeath: {type: String, required: true},
     custodian: {type: String, required: false},
     createdBy: {
-      type: mongooese.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
@@ -20,4 +20,4 @@ const burialSchema = new Schema(
   {timestamps: true}
 );
 
-module.exports = mongooese.model("Burial", burialSchema);
+module.exports = mongoose.model("Burial", burialSchema);

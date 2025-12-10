@@ -18,6 +18,11 @@ const unitLeaderSchema = new Schema(
     },
     unitNumber: {type: String, required: true},
     zonalLeader: {type: String, required: false},
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {timestamps: true}
 );

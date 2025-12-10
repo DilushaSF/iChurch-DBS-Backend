@@ -1,4 +1,5 @@
 const express = require("express");
+const authMiddleware = require("../middleware/auth");
 const {
   addUnitLeader,
   getUnitLeaders,
@@ -10,18 +11,18 @@ const {
 const router = express.Router();
 
 //Get all unit leaders
-router.get("/", getUnitLeaders);
+router.get("/", authMiddleware, getUnitLeaders);
 
 // Adding a new unit leader
-router.post("/", addUnitLeader);
+router.post("/", authMiddleware, addUnitLeader);
 
 // Get a single unit leader
-router.get("/:id", getUnitLeader);
+router.get("/:id", authMiddleware, getUnitLeader);
 
 // Edit a single unit leader
-router.patch("/:id", editUnitLeader);
+router.patch("/:id", authMiddleware, editUnitLeader);
 
 // Delete a single unit leader
-router.delete("/:id", deleteUnitLeader);
+router.delete("/:id", authMiddleware, deleteUnitLeader);
 
 module.exports = router;

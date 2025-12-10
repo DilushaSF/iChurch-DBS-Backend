@@ -4,7 +4,9 @@ const mongoose = require("mongoose");
 // get all unit leaders
 const getUnitLeaders = async (req, res) => {
   try {
-    const unitLeaders = await UnitLeader.find({}).sort({createdAt: -1});
+    const unitLeaders = await UnitLeader.find({createdBy: req.user._id}).sort({
+      createdAt: -1,
+    });
     res.status(200).json(unitLeaders);
   } catch (error) {
     res.status(400).json({error: error.message});
@@ -17,7 +19,10 @@ const getUnitLeader = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: "No such unit leader ID"});
   }
-  const unitLeader = await UnitLeader.findById(id);
+  const unitLeader = await UnitLeader.findOne({
+    _id: id,
+    createdBy: req.user._id,
+  });
   if (!unitLeader) {
     return res.status(404).json({error: "Unit leader not found"});
   }
@@ -39,6 +44,12 @@ const addUnitLeader = async (req, res) => {
     zonalLeader,
   } = req.body;
   try {
+    const createdBy = req.user._id;
+
+    if (!createdBy) {
+      return res.status(401).json({error: "User not authenticated"});
+    }
+
     const newUnitLeader = await UnitLeader.create({
       firstName,
       lastName,
@@ -49,6 +60,7 @@ const addUnitLeader = async (req, res) => {
       unitNumber,
       dateOfBirth,
       zonalLeader,
+      createdBy,
     });
     res.status(200).json(newUnitLeader);
   } catch (error) {
@@ -63,7 +75,10 @@ const deleteUnitLeader = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: "No such unit leader ID"});
   }
-  const unitLeader = await UnitLeader.findOneAndDelete({_id: id});
+  const unitLeader = await UnitLeader.findOneAndDelete({
+    _id: id,
+    createdBy: req.user._id,
+  });
 
   if (!unitLeader) {
     return res.status(404).json({error: "Unit leader not found"});
@@ -81,7 +96,7 @@ const editUnitLeader = async (req, res) => {
   }
 
   const unitLeader = await UnitLeader.findOneAndUpdate(
-    {_id: id},
+    {_id: id, createdBy: req.user._id},
     {...req.body}
   );
 
