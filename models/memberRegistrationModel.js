@@ -37,6 +37,11 @@ const memberRegistrationSchema = new Schema(
     capableDonationPerMonth: {type: Number, required: false},
 
     children: [childSchema],
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {timestamps: true}
 );

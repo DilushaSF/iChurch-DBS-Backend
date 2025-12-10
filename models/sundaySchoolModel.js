@@ -1,6 +1,6 @@
-const mongooese = require("mongoose");
+const mongoose = require("mongoose");
 
-const Schema = mongooese.Schema;
+const Schema = mongoose.Schema;
 
 const sundaySchoolSchema = new Schema(
   {
@@ -13,8 +13,13 @@ const sundaySchoolSchema = new Schema(
     className: {type: String, required: true},
     remarks: {type: String, required: false},
     isActive: {type: Boolean, required: false, default: true},
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {timestamps: true}
 );
 
-module.exports = mongooese.model("SundaySchool", sundaySchoolSchema);
+module.exports = mongoose.model("SundaySchool", sundaySchoolSchema);

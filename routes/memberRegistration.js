@@ -1,4 +1,5 @@
 const express = require("express");
+const authMiddleware = require("../middleware/auth");
 const {
   createMemberRegistration,
   getMemberRegistrations,
@@ -10,18 +11,18 @@ const {
 const router = express.Router();
 
 // get all member
-router.get("/", getMemberRegistrations);
+router.get("/", authMiddleware, getMemberRegistrations);
 
 // get a single member
-router.get("/:id", getMemberRegistration);
+router.get("/:id", authMiddleware, getMemberRegistration);
 
 // add a new member
-router.post("/", createMemberRegistration);
+router.post("/", authMiddleware, createMemberRegistration);
 
 // delete a member
-router.delete("/:id", deleteMemberRegistration);
+router.delete("/:id", authMiddleware, deleteMemberRegistration);
 
 // edit a member
-router.patch("/:id", editMemberRegistration);
+router.patch("/:id", authMiddleware, editMemberRegistration);
 
 module.exports = router;

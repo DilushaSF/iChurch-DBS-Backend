@@ -4,7 +4,9 @@ const mongoose = require("mongoose");
 // get all member registration records
 const getMemberRegistrations = async (req, res) => {
   try {
-    const memberRegistrations = await MemberRegistration.find({}).sort({
+    const memberRegistrations = await MemberRegistration.find({
+      createdBy: req.user._id,
+    }).sort({
       createdAt: -1,
     });
     res.status(200).json(memberRegistrations);
@@ -21,7 +23,10 @@ const getMemberRegistration = async (req, res) => {
       .status(404)
       .json({error: "No such member registration record ID"});
   }
-  const memberRegistration = await MemberRegistration.findById(id);
+  const memberRegistration = await MemberRegistration.findOne({
+    _id: id,
+    createdBy: req.user._id,
+  });
   if (!memberRegistration) {
     return res
       .status(404)
@@ -53,6 +58,12 @@ const createMemberRegistration = async (req, res) => {
     children,
   } = req.body;
   try {
+    const createdBy = req.user._id;
+
+    if (!createdBy) {
+      return res.status(401).json({error: "User not authenticated"});
+    }
+
     const newMemberRegistration = await MemberRegistration.create({
       church,
       nameOfFather,
@@ -71,6 +82,7 @@ const createMemberRegistration = async (req, res) => {
       marriedChurch,
       capableDonationPerMonth,
       children,
+      createdBy,
     });
     res.status(200).json(newMemberRegistration);
   } catch (error) {
@@ -88,6 +100,7 @@ const deleteMemberRegistration = async (req, res) => {
   }
   const memberRegistration = await MemberRegistration.findOneAndDelete({
     _id: id,
+    createdBy: req.user._id,
   });
   if (!memberRegistration) {
     return res
@@ -109,7 +122,7 @@ const editMemberRegistration = async (req, res) => {
   }
 
   const memberRegistration = await MemberRegistration.findOneAndUpdate(
-    {_id: id},
+    {_id: id, createdBy: req.user._id},
     {...req.body},
     {new: true}
   );

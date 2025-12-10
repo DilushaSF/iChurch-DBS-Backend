@@ -4,7 +4,9 @@ const mongoose = require("mongoose");
 // get all suunday school teachers
 const getSundaySchoolTeachers = async (req, res) => {
   try {
-    const sundaySchoolTeachers = await SundaySchool.find({}).sort({
+    const sundaySchoolTeachers = await SundaySchool.find({
+      createdBy: req.user._id,
+    }).sort({
       createdAt: -1,
     });
     res.status(200).json(sundaySchoolTeachers);
@@ -19,7 +21,10 @@ const getSundaySchoolTeacher = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: "No such sunday school teacher ID"});
   }
-  const sundaySchoolTeacher = await SundaySchool.findById(id);
+  const sundaySchoolTeacher = await SundaySchool.findOne({
+    _id: id,
+    createdBy: req.user._id,
+  });
   if (!sundaySchoolTeacher) {
     return res.status(404).json({error: "Sunday school teacher not found"});
   }
@@ -41,6 +46,12 @@ const addSundaySchoolTeacher = async (req, res) => {
     isActive,
   } = req.body;
   try {
+    const createdBy = req.user._id;
+
+    if (!createdBy) {
+      return res.status(401).json({error: "User not authenticated"});
+    }
+
     const newSundaySchoolTeacher = await SundaySchool.create({
       firstName,
       lastName,
@@ -51,6 +62,7 @@ const addSundaySchoolTeacher = async (req, res) => {
       className,
       remarks,
       isActive,
+      createdBy,
     });
     res.status(200).json(newSundaySchoolTeacher);
   } catch (error) {
@@ -64,7 +76,10 @@ const deleteSundaySchoolTeacher = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({error: "No such sunday school teacher ID"});
   }
-  const sundaySchoolTeacher = await SundaySchool.findOneAndDelete({_id: id});
+  const sundaySchoolTeacher = await SundaySchool.findOneAndDelete({
+    _id: id,
+    createdBy: req.user._id,
+  });
   if (!sundaySchoolTeacher) {
     return res.status(404).json({error: "Sunday school teacher not found"});
   }
@@ -81,7 +96,7 @@ const editSundaySchoolTeacher = async (req, res) => {
   }
 
   const sundaySchoolTeacher = await SundaySchool.findOneAndUpdate(
-    {_id: id},
+    {_id: id, createdBy: req.user._id},
     {...req.body}
   );
 
