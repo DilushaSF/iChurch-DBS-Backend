@@ -4,7 +4,9 @@ const mongoose = require("mongoose");
 // Get All Events
 const getAllEvents = async (req, res) => {
   try {
-    const events = await Event.find({}).sort({startDate: 1});
+    const events = await Event.find({createdBy: req.user._id}).sort({
+      startDate: 1,
+    });
     res.status(200).json(events);
   } catch (error) {
     console.error("Error fetching events:", error);
@@ -31,6 +33,12 @@ const createEvent = async (req, res) => {
   } = req.body;
 
   try {
+    const createdBy = req.user._id;
+
+    if (!createdBy) {
+      return res.status(401).json({error: "User not authenticated"});
+    }
+
     const newEvent = await Event.create({
       title,
       description,
@@ -45,6 +53,7 @@ const createEvent = async (req, res) => {
       allDay,
       reminder,
       reminderTime,
+      createdBy,
     });
 
     res.status(201).json(newEvent);
@@ -71,6 +80,7 @@ const getEventsByDateRange = async (req, res) => {
     // Query with Mongoose
     const events = await Event.find({
       startDate: {$gte: start, $lte: end},
+      createdBy: req.user._id,
     }).sort({startDate: 1});
 
     res.status(200).json(events);
@@ -88,7 +98,10 @@ const getEventById = async (req, res) => {
       return res.status(404).json({error: "No event ID"});
     }
 
-    const event = await Event.findById(id);
+    const event = await Event.findById({
+      _id: id,
+      createdBy: req.user._id,
+    });
 
     if (!event) {
       return res.status(404).json({error: "Event not found"});
@@ -109,7 +122,7 @@ const updateEvent = async (req, res) => {
     }
 
     const updatedEvent = await Event.findByIdAndUpdate(
-      {_id: id},
+      {_id: id, createdBy: req.user._id},
       {
         ...req.body,
       },
@@ -135,7 +148,10 @@ const deleteEvent = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(404).json({error: "No such event ID"});
     }
-    const deletedEvent = await Event.findByIdAndDelete(id);
+    const deletedEvent = await Event.findByIdAndDelete({
+      _id: id,
+      createdBy: req.user._id,
+    });
 
     if (!deletedEvent) {
       return res.status(404).json({error: "Event not found"});

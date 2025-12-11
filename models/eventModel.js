@@ -17,6 +17,11 @@ const eventSchema = new Schema(
     createdBy: {type: String, required: false},
     reminder: {type: Boolean, required: false, default: false},
     reminderTime: {type: Date, required: false},
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   {
     timestamps: true,
