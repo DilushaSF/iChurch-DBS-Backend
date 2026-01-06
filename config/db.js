@@ -4,7 +4,7 @@ const PORT = process.env.PORT || 5000;
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
-    console.log(`Connected to iChurch Database + Server is running on ${PORT}`);
+    // console.log(`Connected to iChurch Database + Server is running on ${PORT}`);
   } catch (error) {
     console.error(error.message);
     process.exit(1);

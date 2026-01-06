@@ -22,9 +22,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const PORT = process.env.PORT || 5000;
+
 // Connect to MongoDB
 const connectDB = require("./config/db");
 connectDB();
+
+app.listen(PORT, () =>
+  console.log(
+    `Connected to iChurch Database + Server is running on port ${PORT}`
+  )
+);
 
 //middleware
 app.use((req, res, next) => {
